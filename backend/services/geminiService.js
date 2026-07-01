@@ -12,13 +12,17 @@ export async function analyzeAgreement(agreementText) {
     });
 
     const prompt = `
-You are an AI legal assistant.
+You are AgreeWise AI.
 
 Analyze the following agreement.
 
+IMPORTANT:
 Return ONLY valid JSON.
+Do NOT use markdown.
+Do NOT use \`\`\`json.
+Do NOT explain anything.
 
-Format:
+Return exactly in this format:
 
 {
   "summary":"",
@@ -39,9 +43,22 @@ ${agreementText}
     const result = await model.generateContent(prompt);
     const response = await result.response;
 
-    return response.text();
+    let text = response.text().trim();
+
+    // Remove markdown if Gemini still adds it
+    text = text
+      .replace(/^```json/i, "")
+      .replace(/^```/, "")
+      .replace(/```$/, "")
+      .trim();
+
+    // Convert JSON string into object
+    const json = JSON.parse(text);
+
+    return json;
+
   } catch (error) {
-    console.error(error);
+    console.error("Gemini Error:", error);
     throw error;
   }
 }
