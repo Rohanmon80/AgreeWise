@@ -7,6 +7,7 @@ import {
   FaWandMagicSparkles,
 } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
 
 function AgreementInput() {
   const [agreement, setAgreement] = useState("");
@@ -22,23 +23,35 @@ function AgreementInput() {
       return;
     }
 
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    // Temporary loading animation
-    setTimeout(() => {
+      const response = await api.post("/analyze", {
+        agreement,
+      });
+
       setLoading(false);
 
       navigate("/analysis", {
         state: {
           agreement,
+          analysis: response.data.result,
         },
       });
-    }, 2000);
+    } catch (error) {
+      setLoading(false);
+
+      console.error(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to analyze agreement. Please try again."
+      );
+    }
   };
 
   return (
     <div className="mt-16 max-w-5xl mx-auto">
-
       {/* Glass Card */}
       <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_20px_80px_rgba(37,99,235,0.20)] overflow-hidden">
 
@@ -109,7 +122,7 @@ function AgreementInput() {
             >
               <FaWandMagicSparkles />
 
-              {loading ? "Analyzing..." : "Analyze Agreement"}
+              {loading ? "Analyzing with AI..." : "Analyze Agreement"}
             </button>
 
           </div>
@@ -117,7 +130,6 @@ function AgreementInput() {
         </div>
 
       </div>
-
     </div>
   );
 }
