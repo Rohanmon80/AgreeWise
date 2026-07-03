@@ -4,6 +4,9 @@ import Features from "../components/Features/Features";
 import BackgroundGlow from "../components/common/BackgroundGlow";
 import HowItWorks from "../components/HowItWorks/HowItWorks";
 import AnalysisPreview from "../components/AnalysisPreview/AnalysisPreview";
+import About from "../components/About/About";
+import FAQ from "../components/FAQ/FAQ";
+import Footer from "../components/Footer/Footer";
 
 function Home() {
   return (
@@ -18,6 +21,9 @@ function Home() {
     <Features />
     <HowItWorks />
     <AnalysisPreview />
+    <About />
+    <FAQ />
+    <Footer />
 </main>
 
     </div>

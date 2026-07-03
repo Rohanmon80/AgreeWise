@@ -39,7 +39,8 @@ function Features() {
 
   return (
     <section
-      className={`relative py-32 px-6 transition-all duration-500 ${
+  id="features"
+  className={`relative py-32 px-6 transition-all duration-500 ${
         darkMode
           ? "bg-[#030712] text-white"
           : "bg-white text-slate-900"

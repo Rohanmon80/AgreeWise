@@ -80,12 +80,13 @@ function Hero() {
 
         {/* Agreement Card */}
         <motion.div
-          initial={{ opacity: 0, y: 70 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45 }}
-        >
-          <AgreementInput />
-        </motion.div>
+  id="agreement-section"
+  initial={{ opacity: 0, y: 70 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.45 }}
+>
+  <AgreementInput />
+</motion.div>
 
         {/* Trusted */}
         <motion.div

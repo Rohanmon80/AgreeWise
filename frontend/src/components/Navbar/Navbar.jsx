@@ -43,30 +43,26 @@ function Navbar() {
           {/* Menu */}
 
           <div
-            className={`hidden md:flex items-center gap-10 ${
-              darkMode ? "text-slate-300" : "text-slate-700"
-            }`}
-          >
-            <a href="#" className="hover:text-blue-500 transition">
-              Features
-            </a>
+  className={`hidden md:flex items-center gap-10 ${
+    darkMode ? "text-slate-300" : "text-slate-700"
+  }`}
+>
+  <a href="#features" className="hover:text-blue-500 transition">
+    Features
+  </a>
 
-            <a href="#" className="hover:text-blue-500 transition">
-              How It Works
-            </a>
+  <a href="#how-it-works" className="hover:text-blue-500 transition">
+    How It Works
+  </a>
 
-            <a href="#" className="hover:text-blue-500 transition">
-              Pricing
-            </a>
+  <a href="#about" className="hover:text-blue-500 transition">
+    About
+  </a>
 
-            <a href="#" className="hover:text-blue-500 transition">
-              About
-            </a>
-
-            <a href="#" className="hover:text-blue-500 transition">
-              Contact
-            </a>
-          </div>
+  <a href="#faq" className="hover:text-blue-500 transition">
+    FAQ
+  </a>
+</div>
 
           {/* Right Side */}
 
@@ -97,33 +93,34 @@ function Navbar() {
               )}
             </button>
 
-            <button
-              className={`font-medium transition ${
-                darkMode
-                  ? "text-white hover:text-blue-400"
-                  : "text-slate-900 hover:text-blue-500"
-              }`}
-            >
-              Login
-            </button>
+            
 
             <button
-              className="
-                px-6 py-3
-                rounded-xl
-                font-semibold
-                text-white
-                bg-gradient-to-r
-                from-blue-600
-                to-indigo-600
-                hover:scale-105
-                transition-all
-                shadow-lg
-                shadow-blue-600/30
-              "
-            >
-              Get Started →
-            </button>
+            
+  onClick={() =>
+    document
+      .getElementById("agreement-section")
+      ?.scrollIntoView({
+        behavior: "smooth",
+      })
+  }
+  className="
+    px-6 py-3
+    rounded-xl
+    font-semibold
+    text-white
+    bg-gradient-to-r
+    from-blue-600
+    to-indigo-600
+    hover:scale-105
+    transition-all
+    shadow-lg
+    shadow-blue-600/30
+  "
+>
+  Analyze Now →
+</button>
+  
 
           </div>
         </div>
