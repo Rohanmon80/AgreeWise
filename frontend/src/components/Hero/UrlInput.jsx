@@ -1,15 +1,26 @@
-function UrlInput() {
+import { FaLink } from "react-icons/fa";
+
+function UrlInput({ url, setUrl }) {
   return (
     <div className="h-80 flex flex-col justify-center">
 
-      <input
-        type="url"
-        placeholder="https://example.com/privacy-policy"
-        className="rounded-2xl bg-slate-900/70 border border-white/10 p-5 text-white outline-none focus:border-blue-500"
-      />
+      <div className="flex items-center gap-3 rounded-2xl bg-slate-900/70 border border-white/10 px-5 py-4">
 
-      <p className="text-slate-400 mt-5">
-        Website analysis coming soon
+        <FaLink className="text-blue-500 text-xl" />
+
+        <input
+          type="url"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="https://example.com/privacy-policy"
+          className="flex-1 bg-transparent outline-none text-white placeholder:text-slate-500"
+        />
+
+      </div>
+
+      <p className="text-slate-400 mt-5 leading-7">
+        Paste the URL of a Terms & Conditions, Privacy Policy or User Agreement.
+        AgreeWise will fetch the webpage, extract the readable text and analyze it with AI.
       </p>
 
     </div>

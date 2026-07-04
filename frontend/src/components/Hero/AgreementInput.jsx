@@ -17,6 +17,8 @@ import UrlInput from "./UrlInput";
 function AgreementInput() {
   const [agreement, setAgreement] = useState("");
   const [pdfFile, setPdfFile] = useState(null);
+  const [docxFile, setDocxFile] = useState(null);
+  const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [inputType, setInputType] = useState("text");
 
@@ -84,6 +86,80 @@ function AgreementInput() {
   // -------------------------
   // PDF ANALYSIS
   // -------------------------
+  const handleURLAnalyze = async () => {
+  if (!url.trim()) {
+    alert("Please enter a URL.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const response = await api.post("/analyze/url", {
+      url,
+    });
+
+    navigate("/analysis", {
+      state: {
+        agreement: url,
+        analysis: response.data.result,
+      },
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to analyze URL."
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const handleDOCXAnalyze = async () => {
+  if (!docxFile) {
+    alert("Please choose a DOCX file first.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("docx", docxFile);
+
+    const response = await api.post(
+      "/analyze/docx",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    navigate("/analysis", {
+      state: {
+        agreement: docxFile.name,
+        analysis: response.data.result,
+      },
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to analyze DOCX."
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
   const handlePDFAnalyze = async () => {
     if (!pdfFile) {
       alert("Please choose a PDF first.");
@@ -225,14 +301,65 @@ function AgreementInput() {
           {/* DOCX */}
 
           {inputType === "docx" && (
-            <DocxInput />
-          )}
+  <>
+    <DocxInput
+      onFileSelect={setDocxFile}
+    />
+
+    <div className="flex justify-end mt-8">
+
+      <button
+        onClick={handleDOCXAnalyze}
+        disabled={loading}
+        className={`flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-semibold transition-all duration-300 ${
+          loading
+            ? "bg-gray-600 cursor-not-allowed"
+            : "bg-gradient-to-r from-blue-600 to-cyan-600 hover:scale-105 shadow-lg shadow-blue-500/30"
+        }`}
+      >
+        <FaFileWord />
+
+        {loading
+          ? "Analyzing DOCX..."
+          : "Analyze DOCX"}
+
+      </button>
+
+    </div>
+  </>
+)}
 
           {/* URL */}
 
           {inputType === "url" && (
-            <UrlInput />
-          )}
+  <>
+    <UrlInput
+      url={url}
+      setUrl={setUrl}
+    />
+
+    <div className="flex justify-end mt-8">
+
+      <button
+        onClick={handleURLAnalyze}
+        disabled={loading}
+        className={`flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-semibold transition-all duration-300 ${
+          loading
+            ? "bg-gray-600 cursor-not-allowed"
+            : "bg-gradient-to-r from-green-600 to-emerald-600 hover:scale-105 shadow-lg shadow-green-500/30"
+        }`}
+      >
+        <FaLink />
+
+        {loading
+          ? "Analyzing URL..."
+          : "Analyze URL"}
+
+      </button>
+
+    </div>
+  </>
+)}
 
         </div>
 
