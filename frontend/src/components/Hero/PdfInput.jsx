@@ -1,90 +1,72 @@
-import { useState } from "react";
-import { FaFilePdf, FaUpload } from "react-icons/fa6";
-import api from "../../services/api";
-import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
+import { FaFilePdf, FaUpload } from "react-icons/fa";
 
-function PdfInput() {
-  const [file, setFile] = useState(null);
-  const [loading, setLoading] = useState(false);
+function PdfInput({ onFileSelect }) {
+  const inputRef = useRef(null);
+  const [fileName, setFileName] = useState("");
 
-  const navigate = useNavigate();
+  const handleFile = (file) => {
+    if (!file) return;
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleUpload = async () => {
-    if (!file) {
-      alert("Please select a PDF.");
+    if (file.type !== "application/pdf") {
+      alert("Please select a PDF file.");
       return;
     }
 
-    try {
-      setLoading(true);
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Maximum file size is 10 MB.");
+      return;
+    }
 
-      const formData = new FormData();
-      formData.append("pdf", file);
+    setFileName(file.name);
 
-      const response = await api.post("/analyze/pdf", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      navigate("/analysis", {
-        state: {
-          analysis: response.data.result,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-
-      alert(
-        error.response?.data?.message ||
-        "Failed to analyze PDF."
-      );
-    } finally {
-      setLoading(false);
+    if (onFileSelect) {
+      onFileSelect(file);
     }
   };
 
   return (
-    <div className="rounded-3xl border-2 border-dashed border-red-400 p-10 flex flex-col items-center">
+    <div className="h-80 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-red-400 bg-slate-900/40">
 
       <FaFilePdf className="text-red-500 text-7xl mb-6" />
 
-      <h2 className="text-2xl font-bold mb-3">
+      <h2 className="text-2xl font-bold">
         Upload PDF Agreement
       </h2>
 
-      <p className="text-slate-400 mb-8 text-center">
-        Choose a Terms & Conditions or Privacy Policy PDF.
+      <p className="text-slate-400 mt-2 mb-8">
+        Drag & Drop or click below
       </p>
 
       <input
+        ref={inputRef}
         type="file"
         accept=".pdf"
-        onChange={handleFileChange}
-        className="mb-6"
+        hidden
+        onChange={(e) => handleFile(e.target.files[0])}
       />
 
-      {file && (
-        <div className="mb-6 text-green-400">
-          Selected:
-          <br />
-          <strong>{file.name}</strong>
-        </div>
-      )}
-
       <button
-        onClick={handleUpload}
-        disabled={loading}
-        className="px-8 py-4 rounded-xl bg-red-500 hover:bg-red-600 transition flex items-center gap-3"
+        onClick={() => inputRef.current.click()}
+        className="
+          flex items-center gap-3
+          px-8 py-4
+          rounded-xl
+          bg-red-600
+          hover:bg-red-700
+          transition
+        "
       >
         <FaUpload />
 
-        {loading ? "Analyzing..." : "Analyze PDF"}
+        Choose PDF
       </button>
+
+      {fileName && (
+        <p className="mt-6 text-green-400">
+          Selected: {fileName}
+        </p>
+      )}
 
     </div>
   );

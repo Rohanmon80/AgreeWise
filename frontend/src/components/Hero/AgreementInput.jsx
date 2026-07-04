@@ -16,6 +16,7 @@ import UrlInput from "./UrlInput";
 
 function AgreementInput() {
   const [agreement, setAgreement] = useState("");
+  const [pdfFile, setPdfFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [inputType, setInputType] = useState("text");
 
@@ -46,6 +47,9 @@ function AgreementInput() {
     },
   ];
 
+  // -------------------------
+  // TEXT ANALYSIS
+  // -------------------------
   const handleAnalyze = async () => {
     if (!agreement.trim()) {
       alert("Please paste an agreement first.");
@@ -71,6 +75,49 @@ function AgreementInput() {
       alert(
         error.response?.data?.message ||
           "Failed to analyze agreement."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // -------------------------
+  // PDF ANALYSIS
+  // -------------------------
+  const handlePDFAnalyze = async () => {
+    if (!pdfFile) {
+      alert("Please choose a PDF first.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append("pdf", pdfFile);
+
+      const response = await api.post(
+        "/analyze/pdf",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      navigate("/analysis", {
+        state: {
+          agreement: pdfFile.name,
+          analysis: response.data.result,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to analyze PDF."
       );
     } finally {
       setLoading(false);
@@ -111,43 +158,80 @@ function AgreementInput() {
 
         <div className="p-7">
 
+          {/* TEXT */}
+
           {inputType === "text" && (
-            <TextInput
-              agreement={agreement}
-              setAgreement={setAgreement}
-              maxCharacters={maxCharacters}
-            />
+            <>
+              <TextInput
+                agreement={agreement}
+                setAgreement={setAgreement}
+                maxCharacters={maxCharacters}
+              />
+
+              <div className="flex justify-end mt-8">
+
+                <button
+                  onClick={handleAnalyze}
+                  disabled={loading}
+                  className={`flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-semibold transition-all duration-300 ${
+                    loading
+                      ? "bg-gray-600 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:scale-105 shadow-lg shadow-blue-500/30"
+                  }`}
+                >
+                  <FaWandMagicSparkles />
+
+                  {loading
+                    ? "Analyzing with AI..."
+                    : "Analyze Agreement"}
+
+                </button>
+
+              </div>
+            </>
           )}
 
-          {inputType === "pdf" && <PdfInput />}
+          {/* PDF */}
 
-          {inputType === "docx" && <DocxInput />}
+          {inputType === "pdf" && (
+            <>
+              <PdfInput
+                onFileSelect={setPdfFile}
+              />
 
-          {inputType === "url" && <UrlInput />}
+              <div className="flex justify-end mt-8">
 
-          {/* Analyze Button (Text only) */}
+                <button
+                  onClick={handlePDFAnalyze}
+                  disabled={loading}
+                  className={`flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-semibold transition-all duration-300 ${
+                    loading
+                      ? "bg-gray-600 cursor-not-allowed"
+                      : "bg-gradient-to-r from-red-600 to-red-500 hover:scale-105 shadow-lg shadow-red-500/30"
+                  }`}
+                >
+                  <FaFilePdf />
 
-          {inputType === "text" && (
-            <div className="flex justify-end mt-8">
+                  {loading
+                    ? "Analyzing PDF..."
+                    : "Analyze PDF"}
 
-              <button
-                onClick={handleAnalyze}
-                disabled={loading}
-                className={`flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-semibold transition-all duration-300 ${
-                  loading
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:scale-105 shadow-lg shadow-blue-500/30"
-                }`}
-              >
-                <FaWandMagicSparkles />
+                </button>
 
-                {loading
-                  ? "Analyzing with AI..."
-                  : "Analyze Agreement"}
+              </div>
+            </>
+          )}
 
-              </button>
+          {/* DOCX */}
 
-            </div>
+          {inputType === "docx" && (
+            <DocxInput />
+          )}
+
+          {/* URL */}
+
+          {inputType === "url" && (
+            <UrlInput />
           )}
 
         </div>
